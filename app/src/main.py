@@ -1,14 +1,20 @@
-from fastapi import FastAPI, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from contextlib import asynccontextmanager
 from typing import List
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from sqlalchemy.orm import Session
 
 from . import models, schemas
 from .database import Base, engine, get_db
 
 
-Base.metadata.create_all(bind=engine)
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
 
-app = FastAPI(title="Todo API", version="1.0.0")
+
+app = FastAPI(title="Todo API", version="1.0.0", lifespan=lifespan)
 
 
 @app.get("/health", tags=["service"])
@@ -53,7 +59,7 @@ def update_todo(todo_id: int, payload: schemas.TodoUpdate, db: Session = Depends
     if not todo:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found")
 
-    update_data = payload.dict(exclude_unset=True)
+    update_data = payload.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(todo, field, value)
 
