@@ -2,8 +2,8 @@ import os
 
 import pytest
 
-# CI (GitHub Actions) sets POSTGRES_HOST=postgres via workflow env.
-# For local runs: start PostgreSQL on localhost:5432 with matching credentials.
+# CI uses POSTGRES_HOST=127.0.0.1 (service port mapped to localhost).
+# Local: PostgreSQL on localhost:5432 with matching credentials (or override env).
 os.environ.setdefault("POSTGRES_USER", "ci")
 os.environ.setdefault("POSTGRES_PASSWORD", "ci")
 os.environ.setdefault("POSTGRES_DB", "ci")
@@ -26,7 +26,6 @@ def _clear_todos() -> None:
 @pytest.fixture(scope="session")
 def client():
     from fastapi.testclient import TestClient
-
     from src.main import app
 
     with TestClient(app) as c:

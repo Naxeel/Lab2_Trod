@@ -90,7 +90,8 @@ jobs:
       POSTGRES_USER: ci
       POSTGRES_PASSWORD: ci
       POSTGRES_DB: ci
-      POSTGRES_HOST: postgres
+      # Service maps 5432 to the job VM; use loopback (hostname "postgres" may not resolve here).
+      POSTGRES_HOST: 127.0.0.1
       POSTGRES_PORT: "5432"
     steps:
       - uses: actions/checkout@v4

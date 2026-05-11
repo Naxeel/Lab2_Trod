@@ -1,5 +1,4 @@
 from contextlib import asynccontextmanager
-from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm import Session
@@ -22,7 +21,7 @@ def health_check():
     return {"status": "ok"}
 
 
-@app.get("/todos", response_model=List[schemas.TodoOut], tags=["todos"])
+@app.get("/todos", response_model=list[schemas.TodoOut], tags=["todos"])
 def list_todos(db: Session = Depends(get_db)):
     return db.query(models.Todo).all()
 
