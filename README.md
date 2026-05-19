@@ -11,7 +11,7 @@
 | Unit / интеграционные тесты | `app/tests/`, pytest |
 | Линтер | Ruff, конфиг `app/pyproject.toml` |
 | Пайплайн на PR / push | `.github/workflows/ci.yml` |
-| Job **build** — приложение «собирается» (зависимости + импорт) | workflow, job `build` |
+| Job **build** — приложение «собирается» (зависимости + `compileall`) | workflow, job `build` |
 | Job **lint** | `python -m ruff check src tests` |
 | Job **test** + coverage, порог **50%** | pytest `--cov-fail-under=50`, отчёты как артефакты |
 | Job **docker_build** | `docker build` из `./app` |
@@ -77,7 +77,7 @@ python -m pytest tests --cov=src --cov-report=term-missing --cov-report=html:htm
 
 Этапы (jobs):
 
-1. **build** — установка зависимостей из `app/requirements.txt` и dev-зависимостей, проверка что модуль приложения импортируется.  
+1. **build** — установка зависимостей из `app/requirements.txt` и dev-зависимостей, проверка что исходники компилируются (`python -m compileall src`). БД на этом шаге не нужна.  
 2. **lint** — Ruff по `app/src` и `app/tests`.  
 3. **test** — pytest с покрытием кода в `src`, порог **50%**; в артефакты кладутся HTML-отчёт coverage и `coverage.xml`; в лог печатается строка с процентом из XML.  
 4. **docker_build** — сборка образа приложения (`Dockerfile` в `app/`).  

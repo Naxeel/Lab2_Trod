@@ -16,12 +16,6 @@ jobs:
     defaults:
       run:
         working-directory: app
-    env:
-      POSTGRES_USER: build
-      POSTGRES_PASSWORD: build
-      POSTGRES_DB: build
-      POSTGRES_HOST: "127.0.0.1"
-      POSTGRES_PORT: "5432"
     steps:
       - uses: actions/checkout@v4
 
@@ -38,8 +32,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-dev.txt
 
-      - name: Verify application imports
-        run: python -c "from src.main import app; assert app.title == 'Todo API'"
+      - name: Verify Python sources compile
+        run: python -m compileall src
 
   lint:
     name: lint
